@@ -3,10 +3,10 @@
 var Backbone = require("backbone");
 
 var Model = Backbone.Model.extend({
-    remove: function () {
-        this.trigger("destroy", this);
-        this.off();
-        this.stopListening();
+    idAttribute: '_id',
+
+    hasValue: function (value) {
+        return value !== undefined && value !== null;
     }
 });
 

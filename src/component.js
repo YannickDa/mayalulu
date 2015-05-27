@@ -1,87 +1,94 @@
-"use strict";
+'use strict';
 
-var Backbone = require("backbone");
-var Model = require("./model");
-var View = require("./view");
+var Backbone = require('backbone');
+var promise  = require('promisejs');
+var _        = require('underscore');
 
 var Component = Backbone.Model.extend({
-    constructor: function (options) {
-        options = options || {};
+    init: function () {
+        var p = new promise.Promise();
 
-        this._initModel(options);
-        this._initView(options);
-
-        if (options.parent) {
-            this.parent = options.parent;
-            this._view.setParent(this.parent.getView());
+        if (this.modelClass && !this.model) {
+            this.model = new this.modelClass();
         }
 
-        Backbone.Model.apply(this, arguments);
+        if (this.collectionClass && !this.collection) {
+            this.collection = new this.collectionClass();
+        }
+
+        if (this.viewClass && !this.view) {
+            var viewOptions = {};
+
+            if (this.model) {
+                viewOptions.model = this.model;
+            }
+
+            if (this.collection) {
+                viewOptions.collection = this.collection;
+            }
+
+            this.view = new this.viewClass(viewOptions);
+        }
+        else if (this.view) {
+            this.view.delegateEvents();
+        }
+
+        p.done();
+        return p;
     },
 
-    _initModel: function (options) {
-        var modelOptions = options.modelOptions || {};
+    open: function ($toElement, position, animate) {
+        var p = new promise.Promise();
 
-        if (options.model) {
-            this._model = options.model;
-        }
-        else if (options.modelClass) {
-            this._model = new options.modelClass(modelOptions);
+        position = position || 'html';
+        animate = animate || 'fade';
+
+        this.init().then(function () {
+            if (this.view) {
+                this.view.render();
+
+                if (position && position === 'append') {
+                    $toElement.append(this.view.$el.hide());
+                }
+                else {
+                    $toElement.html(this.view.$el.hide());
+                }
+
+                if (animate && animate === 'fade') {
+                    this.view.$el.fadeIn('fast', _.bind(function () {
+                        p.done(this);
+                    }, this));
+                }
+                else if (animate && animate === 'slide') {
+                    this.view.$el.slideDown('fast', _.bind(function () {
+                        p.done(this);
+                    }, this));
+                }
+                else {
+                    this.view.$el.show();
+                    p.done(this);
+                }
+            }
+        }, this);
+
+        return p;
+    },
+
+    close: function () {
+        var p = new promise.Promise();
+
+        if (this.view) {
+            this.view.$el.fadeOut('fast', _.bind(function () {
+                this.view.remove();
+                p.done();
+            }, this));
         }
         else {
-            this._model = new Model(modelOptions);
-        }
-    },
-
-    _initView: function (options) {
-        var viewOptions = options.viewOptions || {};
-
-        viewOptions.model = this._model;
-
-        if (options.view) {
-            this._view = options.view;
-        }
-        else if (options.viewClass) {
-            this._view = new options.viewClass(viewOptions);
-        }
-        else {
-            this._view = new View(viewOptions);
-        }
-    },
-
-    getView: function () {
-        return this._view;
-    },
-
-    setView: function (view) {
-        if (this._view) {
-            this._view.remove();
+            p.done();
         }
 
-        this._view = view;
-        return this;
-    },
-
-    getModel: function () {
-        return this._model;
-    },
-
-    destroy: function () {
-        if (this._view) {
-            this._view.remove();
-            this._view = null;
-        }
-
-        if (this._model) {
-            this._model.remove();
-            this._model = null;
-        }
-    },
-
-    hide: function () {
-        return this.getView().hide();
+        return p;
     }
 });
-
 
 module.exports = Component;
