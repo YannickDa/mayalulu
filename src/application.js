@@ -22,17 +22,30 @@ var Application = Backbone.Router.extend({
     controllers: {},
     currentPage: null,
 
-    initialize: function () {
+    initialize: function (attrs, options) {
         this.currentPage = null;
+
+        this.services = options.serives || {};
+        this.models = options.models || {};
+        this.collections = options.collections || {};
+        this.components = options.components || {};
+        this.controllersClass = options.controllersClass || {};
     },
 
     initializeControllers: function () {
+        console.log('Create global router');
         this.router = new Backbone.Router();
 
+        console.log('load ' + _.size(this.controllersClass) + ' controllers');
         _(this.controllersClass).forEach(function (controller, name) {
+            console.log('Load ' + name + ' controller');
             this.controllers[name] = controller(this.router);
+            console.log('Controller loaded');
         }, this);
 
+        console.log('All controllers are loaded');
+
+        console.log('Start Router');
         Backbone.history.start({
             pushState: true
         });
@@ -77,6 +90,7 @@ var Application = Backbone.Router.extend({
     start: function () {
         console.log("Start application");
         $(_.bind(function () {
+            console.log('Initialize controllers');
             this.initializeControllers();
         }, this));
     },

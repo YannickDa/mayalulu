@@ -1,9 +1,9 @@
 "use strict";
 
-module.exports.Mayalulu.Application = require('./src/application');
-
-module.exports.Mayalulu.Model = require('./src/model');
-
-module.exports.Mayalulu.Component = require('./src/component');
-
-module.exports.Mayalulu.View = require('./src/view');
+module.exports = {
+    app: require('./src/application'),
+    model: require('./src/model'),
+    component: require('./src/component'),
+    view: require('./src/view'),
+    routes: require('./src/routes')
+};
