@@ -17,7 +17,7 @@ var Component = Backbone.Model.extend({
         }
 
         if (this.viewClass && !this.view) {
-            var viewOptions = {};
+            var viewOptions = this.viewOptions || {};
 
             if (this.model) {
                 viewOptions.model = this.model;
@@ -44,7 +44,7 @@ var Component = Backbone.Model.extend({
         animate = animate || 'fade';
 
         this.init().then(function () {
-            if (this.view) {
+            if (this.view && !document.contains(this.view.el)) {
                 this.view.render();
 
                 if (position && position === 'append') {
@@ -68,6 +68,9 @@ var Component = Backbone.Model.extend({
                     this.view.$el.show();
                     p.done(this);
                 }
+            }
+            else {
+                p.done(this);
             }
         }, this);
 

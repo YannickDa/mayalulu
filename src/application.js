@@ -24,12 +24,6 @@ var Application = Backbone.Router.extend({
 
     initialize: function (attrs, options) {
         this.currentPage = null;
-
-        this.services = options.serives || {};
-        this.models = options.models || {};
-        this.collections = options.collections || {};
-        this.components = options.components || {};
-        this.controllersClass = options.controllersClass || {};
     },
 
     initializeControllers: function () {
@@ -87,7 +81,13 @@ var Application = Backbone.Router.extend({
         }, this);
     },
 
-    start: function () {
+    start: function (options) {
+        this.services = options.serives || {};
+        this.models = options.models || {};
+        this.collections = options.collections || {};
+        this.components = options.components || {};
+        this.controllersClass = options.controllersClass || {};
+
         console.log("Start application");
         $(_.bind(function () {
             console.log('Initialize controllers');
