@@ -45,6 +45,10 @@ var Component = Backbone.Model.extend({
 
         this.init().then(function () {
             if (this.view && !document.contains(this.view.el)) {
+                if (this.view.init) {
+                    this.view.init();
+                }
+
                 this.view.render();
 
                 if (position && position === 'append') {
@@ -70,6 +74,10 @@ var Component = Backbone.Model.extend({
                 }
             }
             else {
+                if (this.view.init) {
+                    this.view.init();
+                }
+
                 p.done(this);
             }
         }, this);
