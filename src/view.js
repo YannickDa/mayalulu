@@ -20,7 +20,7 @@ var View = Backbone.View.extend({
     render: function () {
         var data = {};
         if (this.model) {
-            data = this.model.toJSON();
+            data = this.model.toJSON ? this.model.toJSON():this.model;
         }
 
         this.$el.html(this.template(data));
