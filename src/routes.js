@@ -16,6 +16,7 @@ Routes.prototype = {
 
             _(this.routes).forEach(function (action, url) {
                 routes[lang + url] = action;
+                routes[url.replace(/^\/(.*)/g, '$1')] = action;
             });
 
             this.compiledRoutes = routes;
