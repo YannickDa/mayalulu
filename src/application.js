@@ -1,14 +1,6 @@
 'use strict';
 
-var $ = require('jquery');
-require('jquery-ui');
-
 var Backbone = require('backbone');
-Backbone.$ = $;
-require('./plugins/backbone.tojson');
-require('./plugins/jquery.serializeObject');
-require('./plugins/jquery.displayErrorMessages');
-
 var _        = require('underscore');
 var promise  = require('promisejs');
 
@@ -82,7 +74,7 @@ var Application = Backbone.Router.extend({
     },
 
     start: function (options) {
-        this.services = options.serives || {};
+        this.services = options.services || {};
         this.models = options.models || {};
         this.collections = options.collections || {};
         this.components = options.components || {};

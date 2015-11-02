@@ -6,6 +6,16 @@ var _        = require('underscore');
 var promise  = require('promisejs');
 
 var View = Backbone.View.extend({
+    childViews: {},
+
+    remove: function () {
+        _(this.childViews).forEach(function (view) {
+            view.remove();
+        });
+
+        Backbone.View.prototype.remove.call(this);
+    },
+
     hide: function () {
         var p = new promise.Promise();
 

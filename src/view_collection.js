@@ -1,6 +1,6 @@
 'use strict';
 
-var Backbone = require('Backbone');
+var Backbone = require('backbone');
 var _ = require('underscore');
 var View = require('./view');
 
