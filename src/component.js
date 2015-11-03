@@ -8,6 +8,8 @@ var Component = Backbone.Model.extend({
     init: function () {
         var p = new promise.Promise();
 
+        var viewObjects = this.viewObjects || {};
+
         if (this.modelClass && !this.model) {
             this.model = new this.modelClass();
         }
@@ -31,6 +33,14 @@ var Component = Backbone.Model.extend({
         }
         else if (this.view) {
             this.view.delegateEvents();
+        }
+
+        if (viewObjects && _.size(viewObjects) > 0) {
+            _(viewObjects).forEach(function (obj, key) {
+                console.log(key);
+                console.log(obj);
+                this.view[key] = obj;
+            }, this);
         }
 
         p.done();

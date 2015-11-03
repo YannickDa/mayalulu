@@ -5,27 +5,21 @@ var _        = require('underscore');
 var promise  = require('promisejs');
 
 var Application = Backbone.Router.extend({
-    services: {},
-    models: {},
-    collections: {},
-    components: {},
-    controllersClass: {},
-
-    controllers: {},
     currentPage: null,
+    states: new Backbone.Model(),
 
     initialize: function (attrs, options) {
         this.currentPage = null;
     },
 
-    initializeControllers: function () {
+    initializeControllers: function (controllers = []) {
         console.log('Create global router');
         this.router = new Backbone.Router();
 
-        console.log('load ' + _.size(this.controllersClass) + ' controllers');
-        _(this.controllersClass).forEach(function (controller, name) {
+        console.log('load ' + controllers.length + ' controllers');
+        _(controllers).forEach(function (controller, name) {
             console.log('Load ' + name + ' controller');
-            this.controllers[name] = controller(this.router);
+            controller(this.router);
             console.log('Controller loaded');
         }, this);
 
@@ -62,9 +56,6 @@ var Application = Backbone.Router.extend({
 
     open: function (page) {
         console.log('open page ', page);
-        if (_.isString(page)) {
-            page = this.getComponent(page);
-        }
 
         return this.closeCurrentPage().then(function () {
             console.log('display new page');
@@ -74,33 +65,11 @@ var Application = Backbone.Router.extend({
     },
 
     start: function (options) {
-        this.services = options.services || {};
-        this.models = options.models || {};
-        this.collections = options.collections || {};
-        this.components = options.components || {};
-        this.controllersClass = options.controllersClass || {};
-
         console.log("Start application");
         $(_.bind(function () {
             console.log('Initialize controllers');
-            this.initializeControllers();
+            this.initializeControllers(options.controllers);
         }, this));
-    },
-
-    getService: function (name) {
-        return this.services[name];
-    },
-
-    getModel: function (name) {
-        return this.models[name];
-    },
-
-    getCollection: function (name) {
-        return this.collections[name];
-    },
-
-    getComponent: function (name) {
-        return this.components[name];
     }
 });
 

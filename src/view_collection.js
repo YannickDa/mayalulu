@@ -7,15 +7,11 @@ var View = require('./view');
 var ViewCollection = View.extend({
     collectionView: null,
 
-    collectionViews: {},
+    childViews: {},
 
     rendered: false,
 
     initialize: function () {
-        this.collection.forEach(function (model) {
-            this.addChild(model);
-        }, this);
-
         this.listenTo(this.collection, 'add', this.addChild);
         this.listenTo(this.collection, 'remove', this.removeChild);
     },
@@ -27,7 +23,7 @@ var ViewCollection = View.extend({
 
         childView.render();
 
-        this.collectionViews[model.id] = childView;
+        this.childViews[model.id] = childView;
 
         if (this.rendered) {
             this.renderChild(childView);
@@ -44,31 +40,31 @@ var ViewCollection = View.extend({
             model = modelOrView.model;
         }
 
-        if (this.collectionViews[model.id]) {
-            this.collectionViews[model.id].remove();
-            delete this.collectionViews[model.id];
+        if (this.childViews[model.id]) {
+            this.childViews[model.id].remove();
+            delete this.childViews[model.id];
         }
     },
 
     removeChilds: function () {
-        _(this.collectionViews).forEach(function (view) {
+        _(this.childViews).forEach(function (view) {
             this.removeChild(view);
         }, this);
     },
 
     remove: function () {
+        console.error('NNNNNNNNNNOOOOO');
         this.removeChilds();
         View.prototype.remove.apply(this);
     },
 
     render: function () {
         View.prototype.render.apply(this);
-
-        _(this.collectionViews).forEach(function (view) {
-            this.renderChild(view);
-        }, this);
-
         this.rendered = true;
+
+        this.collection.forEach(function (model) {
+            this.addChild(model);
+        }, this);
     }
 });
 
