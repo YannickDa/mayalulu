@@ -6,7 +6,11 @@ var _        = require('underscore');
 var promise  = require('promisejs');
 
 var View = Backbone.View.extend({
-    childViews: {},
+    childViews: null,
+
+    initialize: function () {
+        this.childViews = {};
+    },
 
     remove: function () {
         _(this.childViews).forEach(function (view) {

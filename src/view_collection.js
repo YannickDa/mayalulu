@@ -7,11 +7,12 @@ var View = require('./view');
 var ViewCollection = View.extend({
     collectionView: null,
 
-    childViews: {},
+    childViews: null,
 
     rendered: false,
 
     initialize: function () {
+        this.childViews = {};
         this.listenTo(this.collection, 'add', this.addChild);
         this.listenTo(this.collection, 'remove', this.removeChild);
     },
@@ -53,7 +54,6 @@ var ViewCollection = View.extend({
     },
 
     remove: function () {
-        console.error('NNNNNNNNNNOOOOO');
         this.removeChilds();
         View.prototype.remove.apply(this);
     },

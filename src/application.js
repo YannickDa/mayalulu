@@ -6,10 +6,11 @@ var promise  = require('promisejs');
 
 var Application = Backbone.Router.extend({
     currentPage: null,
-    states: new Backbone.Model(),
+    states: null,
 
     initialize: function (attrs, options) {
         this.currentPage = null;
+        this.states = new Backbone.Model();
     },
 
     initializeControllers: function (controllers = []) {

@@ -37,8 +37,6 @@ var Component = Backbone.Model.extend({
 
         if (viewObjects && _.size(viewObjects) > 0) {
             _(viewObjects).forEach(function (obj, key) {
-                console.log(key);
-                console.log(obj);
                 this.view[key] = obj;
             }, this);
         }
