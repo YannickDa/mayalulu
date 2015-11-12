@@ -55,14 +55,32 @@ var Application = Backbone.Router.extend({
         }, this);
     },
 
-    open: function (page) {
+    open: function (page, action) {
         console.log('open page ', page);
 
-        return this.closeCurrentPage().then(function () {
-            console.log('display new page');
-            this.currentPage = page;
-            return this.currentPage.open(Backbone.$('div.page'));
-        }, this);
+        if (this.currentPage === page) {
+            var p = new promise.Promise();
+            if (action) {
+                this.currentPage[action]();
+            }
+            p.done();
+            return p;
+        }
+        else {
+            return this.closeCurrentPage().then(function () {
+                console.log('display new page');
+                this.currentPage = page;
+                var p = this.currentPage.open(Backbone.$('div.page'));
+
+                if (action) {
+                    p.then(function () {
+                        this.currentPage[action]();
+                    }, this);
+                }
+
+                return p;
+            }, this);
+        }
     },
 
     start: function (options) {
