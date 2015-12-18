@@ -13,7 +13,9 @@ var Application = Backbone.Router.extend({
         this.states = new Backbone.Model();
     },
 
-    initializeControllers: function (controllers = []) {
+    initializeControllers: function (controllers) {
+        controllers = controllers || [];
+
         console.log('Create global router');
         this.router = new Backbone.Router();
 
