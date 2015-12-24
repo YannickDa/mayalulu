@@ -52,9 +52,7 @@ var Application = Backbone.Router.extend({
     },
 
     navigate: function (url) {
-        this.closeCurrentPage().then(function () {
-            this.router.navigate(url, {trigger: true});
-        }, this);
+        this.router.navigate(url, {trigger: true});
     },
 
     open: function (page, action) {

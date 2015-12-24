@@ -32,7 +32,12 @@ var ViewCollection = View.extend({
     },
 
     renderChild: function (view) {
-        this.$el.append(view.el);
+        if (this.appendToElement) {
+            this.$el.find(this.appendToElement).append(view.el);
+        }
+        else {
+            this.$el.append(view.el);
+        }
     },
 
     removeChild: function (modelOrView) {
