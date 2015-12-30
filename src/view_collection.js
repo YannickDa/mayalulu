@@ -70,6 +70,8 @@ var ViewCollection = View.extend({
         this.collection.forEach(function (model) {
             this.addChild(model);
         }, this);
+
+        return this;
     }
 });
 

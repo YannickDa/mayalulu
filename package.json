@@ -29,5 +29,9 @@
     "jquery-ui": "^1.10.5",
     "promisejs": "YannickDa/promisejs",
     "underscore": "~1.8.3"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-object-assign": "^6.3.13",
+    "babel-preset-es2015": "^6.3.13"
   }
 }

@@ -7,6 +7,12 @@ var promise  = require('promisejs');
 var Application = Backbone.Router.extend({
     currentPage: null,
     states: null,
+    hooks: {
+        beforeOpen: [],
+        afterOpen: [],
+        beforeClose: [],
+        afterClose: []
+    },
 
     initialize: function (attrs, options) {
         this.currentPage = null;
@@ -37,14 +43,33 @@ var Application = Backbone.Router.extend({
     closeCurrentPage: function () {
         var p = new promise.Promise();
 
+        if (this.hooks.beforeClose.length) {
+            this.hooks.beforeClose.forEach(function (hook) {
+                hook.call(this);
+            }, this);
+        }
+
         if (this.currentPage) {
             console.log('close current page');
             this.currentPage.close().then(function () {
                 console.log('current page closed');
+
+                if (this.hooks.afterClose.length) {
+                    this.hooks.afterClose.forEach(function (hook) {
+                        hook.call(this);
+                    }, this);
+                }
+
                 p.done();
-            });
+            }, this);
         }
         else {
+            if (this.hooks.afterClose.length) {
+                this.hooks.afterClose.forEach(function (hook) {
+                    hook.call(this);
+                }, this);
+            }
+
             p.done();
         }
 
@@ -58,11 +83,24 @@ var Application = Backbone.Router.extend({
     open: function (page, action) {
         console.log('open page ', page);
 
+        if (this.hooks.beforeOpen.length) {
+            this.hooks.beforeOpen.forEach(function (hook) {
+                hook.call(this);
+            }, this);
+        }
+
         if (this.currentPage === page) {
             var p = new promise.Promise();
             if (action) {
                 this.currentPage[action]();
             }
+
+            if (this.hooks.afterOpen.length) {
+                this.hooks.afterOpen.forEach(function (hook) {
+                    hook.call(this);
+                }, this);
+            }
+
             p.done();
             return p;
         }
@@ -75,6 +113,12 @@ var Application = Backbone.Router.extend({
                 if (action) {
                     p.then(function () {
                         this.currentPage[action]();
+
+                        if (this.hooks.afterOpen.length) {
+                            this.hooks.afterOpen.forEach(function (hook) {
+                                hook.call(this);
+                            }, this);
+                        }
                     }, this);
                 }
 
@@ -89,6 +133,15 @@ var Application = Backbone.Router.extend({
             console.log('Initialize controllers');
             this.initializeControllers(options.controllers);
         }, this));
+    },
+
+    addHook(when, hook) {
+        var availableHooks = _.keys(this.hooks);
+        if (!~availableHooks.indexOf(when)) {
+            throw "No hook "  + when + " exists";
+        }
+
+        this.hooks[when].push(hook);
     }
 });
 
