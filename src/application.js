@@ -16,6 +16,7 @@ var Application = Backbone.Router.extend({
 
     initialize: function (attrs, options) {
         this.currentPage = null;
+        this.routesHit = 0;
         this.states = new Backbone.Model();
     },
 
@@ -35,6 +36,11 @@ var Application = Backbone.Router.extend({
         console.log('All controllers are loaded');
 
         console.log('Start Router');
+
+        Backbone.history.on('route', () => {
+            this.routesHit++;
+        });
+
         Backbone.history.start({
             pushState: true
         });
@@ -43,32 +49,20 @@ var Application = Backbone.Router.extend({
     closeCurrentPage: function () {
         var p = new promise.Promise();
 
-        if (this.hooks.beforeClose.length) {
-            this.hooks.beforeClose.forEach(function (hook) {
-                hook.call(this);
-            }, this);
-        }
+        this.executeHooks('beforeClose');
 
         if (this.currentPage) {
             console.log('close current page');
             this.currentPage.close().then(function () {
                 console.log('current page closed');
 
-                if (this.hooks.afterClose.length) {
-                    this.hooks.afterClose.forEach(function (hook) {
-                        hook.call(this);
-                    }, this);
-                }
+                this.executeHooks('afterClose');
 
                 p.done();
             }, this);
         }
         else {
-            if (this.hooks.afterClose.length) {
-                this.hooks.afterClose.forEach(function (hook) {
-                    hook.call(this);
-                }, this);
-            }
+            this.executeHooks('afterClose');
 
             p.done();
         }
@@ -83,11 +77,7 @@ var Application = Backbone.Router.extend({
     open: function (page, action) {
         console.log('open page ', page);
 
-        if (this.hooks.beforeOpen.length) {
-            this.hooks.beforeOpen.forEach(function (hook) {
-                hook.call(this);
-            }, this);
-        }
+        this.executeHooks('beforeOpen');
 
         if (this.currentPage === page) {
             var p = new promise.Promise();
@@ -95,11 +85,7 @@ var Application = Backbone.Router.extend({
                 this.currentPage[action]();
             }
 
-            if (this.hooks.afterOpen.length) {
-                this.hooks.afterOpen.forEach(function (hook) {
-                    hook.call(this);
-                }, this);
-            }
+            this.executeHooks('afterOpen');
 
             p.done();
             return p;
@@ -114,11 +100,7 @@ var Application = Backbone.Router.extend({
                     p.then(function () {
                         this.currentPage[action]();
 
-                        if (this.hooks.afterOpen.length) {
-                            this.hooks.afterOpen.forEach(function (hook) {
-                                hook.call(this);
-                            }, this);
-                        }
+                        this.executeHooks('afterOpen');
                     }, this);
                 }
 
@@ -135,13 +117,36 @@ var Application = Backbone.Router.extend({
         }, this));
     },
 
-    addHook(when, hook) {
+    addHook: function(when, hook) {
         var availableHooks = _.keys(this.hooks);
         if (!~availableHooks.indexOf(when)) {
             throw "No hook "  + when + " exists";
         }
 
         this.hooks[when].push(hook);
+    },
+
+    executeHooks: function (hookName) {
+        var availableHooks = _.keys(this.hooks);
+        if (!~availableHooks.indexOf(hookName)) {
+            throw "No hook "  + hookName + " exists";
+        }
+
+        if (this.hooks[hookName].length) {
+            var hook;
+            while ((hook = this.hooks[hookName].shift())) {
+                hook.call(this);
+            }
+        }
+    },
+
+    back: function () {
+        const haveHistory = this.routesHit > 1;
+        if (haveHistory) {
+            window.history.back();
+        }
+
+        return haveHistory;
     }
 });
 

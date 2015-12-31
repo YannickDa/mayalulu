@@ -59,25 +59,30 @@ var Component = Backbone.Model.extend({
 
                 this.view.render();
 
-                if (position && position === 'append') {
-                    $toElement.append(this.view.$el.hide());
-                }
-                else {
-                    $toElement.html(this.view.$el.hide());
-                }
+                if ($toElement) {
+                    if (position && position === 'append') {
+                        $toElement.append(this.view.$el.hide());
+                    }
+                    else {
+                        $toElement.html(this.view.$el.hide());
+                    }
 
-                if (animate && animate === 'fade') {
-                    this.view.$el.fadeIn('fast', _.bind(function () {
+                    if (animate && animate === 'fade') {
+                        this.view.$el.fadeIn('fast', _.bind(function () {
+                            p.done(this);
+                        }, this));
+                    }
+                    else if (animate && animate === 'slide') {
+                        this.view.$el.slideDown('fast', _.bind(function () {
+                            p.done(this);
+                        }, this));
+                    }
+                    else {
+                        this.view.$el.show();
                         p.done(this);
-                    }, this));
-                }
-                else if (animate && animate === 'slide') {
-                    this.view.$el.slideDown('fast', _.bind(function () {
-                        p.done(this);
-                    }, this));
+                    }
                 }
                 else {
-                    this.view.$el.show();
                     p.done(this);
                 }
             }
@@ -99,6 +104,7 @@ var Component = Backbone.Model.extend({
         if (this.view) {
             this.view.$el.fadeOut('fast', _.bind(function () {
                 this.view.remove();
+                this.view = null;
                 p.done();
             }, this));
         }

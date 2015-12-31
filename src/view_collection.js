@@ -13,8 +13,6 @@ var ViewCollection = View.extend({
 
     initialize: function () {
         this.childViews = {};
-        this.listenTo(this.collection, 'add', this.addChild);
-        this.listenTo(this.collection, 'remove', this.removeChild);
     },
 
     addChild: function (model) {
@@ -64,6 +62,9 @@ var ViewCollection = View.extend({
     },
 
     render: function () {
+        this.listenTo(this.collection, 'add', this.addChild);
+        this.listenTo(this.collection, 'remove', this.removeChild);
+
         View.prototype.render.apply(this);
         this.rendered = true;
 
