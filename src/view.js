@@ -36,6 +36,9 @@ var View = Backbone.View.extend({
         if (this.model) {
             data = this.model.toJSON ? this.model.toJSON():this.model;
         }
+        else if (this.dummy) {
+            data = this.dummy;
+        }
 
         this.$el.html(this.template(data));
 

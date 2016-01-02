@@ -74,7 +74,7 @@ var Application = Backbone.Router.extend({
         this.router.navigate(url, {trigger: true});
     },
 
-    open: function (page, action) {
+    open: function (page, action, options) {
         console.log('open page ', page);
 
         this.executeHooks('beforeOpen');
@@ -82,7 +82,7 @@ var Application = Backbone.Router.extend({
         if (this.currentPage === page) {
             var p = new promise.Promise();
             if (action) {
-                this.currentPage[action]();
+                this.currentPage[action](options);
             }
 
             this.executeHooks('afterOpen');
@@ -98,7 +98,7 @@ var Application = Backbone.Router.extend({
 
                 if (action) {
                     p.then(function () {
-                        this.currentPage[action]();
+                        this.currentPage[action](options);
 
                         this.executeHooks('afterOpen');
                     }, this);
