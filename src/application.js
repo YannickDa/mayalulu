@@ -37,7 +37,7 @@ var Application = Backbone.Router.extend({
 
         console.log('Start Router');
 
-        Backbone.history.on('route', () => {
+        Backbone.history.on('route', function () {
             this.routesHit++;
         });
 
