@@ -16,16 +16,18 @@ var ViewCollection = View.extend({
     },
 
     addChild: function (model) {
-        var childView = new this.collectionView({
-            model: model
-        });
+        if (!this.childViews[model.id]) {
+            var childView = new this.collectionView({
+                model: model
+            });
 
-        childView.render();
+            childView.render();
 
-        this.childViews[model.id] = childView;
+            this.childViews[model.id] = childView;
 
-        if (this.rendered) {
-            this.renderChild(childView);
+            if (this.rendered) {
+                this.renderChild(childView);
+            }
         }
     },
 
