@@ -1,6 +1,7 @@
 'use strict';
 
 var $ = require('jquery');
+window.jQuery = $;
 require('jquery-ui');
 
 var Backbone = require('backbone');
